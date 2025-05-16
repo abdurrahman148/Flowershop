@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Flower Shop POS system</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
+
+    * {
+      box-sizing: border-box;
+    }
+    body, html {
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      font-family: 'Montserrat', sans-serif;
+      background: linear-gradient(135deg, #f8f4f1, #dbe9e4);
+      color: #4d4d4d;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    #login-section, #pos-section {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 5px 25px rgba(178,58,72,0.15);
+      padding: 30px 40px;
+      width: 100%;
+      max-width: 900px;
+      display: none;
+      flex-direction: column;
+    }
+    #login-section.active, #pos-section.active {
+      display: flex;
+    }
+
+    h1 {
+      color: #b23a48;
+      margin-bottom: 25px;
+      text-align: center;
+      user-select: none;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+    }
+
+    /* Login form */
+    #login-form {
+      display: flex;
+      flex-direction: column;
+      max-width: 360px;
+      margin: 0 auto;
+      gap: 20px;
+    }
+    #login-form label {
+      font-weight: 600;
+      color: #b23a48;
+      margin-bottom: 6px;
+    }
+    #login-form input[type="text"],
+    #login-form input[type="password"] {
+      padding: 12px 15px;
+      border: 2px solid #b23a48;
+      border-radius: 8px;
+      font-size: 1rem;
+      transition: border-color 0.3s ease;
+    }
+    #login-form input[type="text"]:focus,
+    #login-form input[type="password"]:focus {
+      outline: none;
+      border-color: #7b1a25;
+    }
+    #login-form button {
+      background-color: #b23a48;
+      color: white;
+      font-weight: 700;
+      border: none;
+      padding: 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      font-size: 1.1rem;
+      user-select: none;
+    }
+    #login-form button:hover {
+      background-color: #7b1a25;
+    }
+
+    /* POS Layout and header */
+    #pos-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 25px;
+    }
+    #pos-header button {
+      background-color: #b23a48;
+      color: white;
+      font-weight: 700;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      user-select: none;
+    }
+    #pos-header button:hover {
+      background-color: #7b1a25;
+    }
+
+    /* Add product form */
+    #add-product-form {
+      display: flex;
+      gap: 15px;
+      flex-wrap: wrap;
+      margin-bottom: 30px;
+      align-items: flex-end;
+    }
+    #add-product-form label {
+      flex: 1 0 120px;
+      font-weight: 600;
+      color: #b23a48;
+      margin-bottom: 5px;
+    }
+    #add-product-form input[type="text"],
+    #add-product-form input[type="number"] {
+      flex: 1 1 180px;
+      padding: 10px 15px;
+      border: 2px solid #b23a48;
+      border-radius: 8px;
+      font-size: 1rem;
+      transition: border-color 0.3s ease;
+    }
+    #add-product-form input[type="text"]:focus,
+    #add-product-form input[type="number"]:focus {
+      outline: none;
+      border-color: #7b1a25;
+    }
+    #add-product-form button {
+      background-color: #b23a48;
+      color: white;
+      font-weight: 700;
+      border: none;
+      padding: 14px 25px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      user-select: none;
+      flex: 0 0 auto;
+      height: 45px;
+    }
+    #add-product-form button:hover {
+      background-color: #7b1a25;
+    }
+
+    /* Inventory table */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 35px;
+    }
+    thead tr {
+      background-color: #f6d1d9;
+    }
+    table th, table td {
+      padding: 12px 10px;
+      text-align: left;
+      border-bottom: 1px solid #e2cbd5;
+      color: #612f33;
+      vertical-align: middle;
+    }
+    th {
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      font-size: 1rem;
+      user-select: none;
+    }
+    tbody tr:hover {
+      background-color: #ffe6ea;
+    }
+    .action-btn {
+      background: none;
+      border: none;
+      color: #b23a48;
+      cursor: pointer;
+      font-weight: 700;
+      font-size: 1.2rem;
+      user-select: none;
+      padding: 2px 8px;
+      border-radius: 6px;
+      transition: background-color 0.2s ease;
+      margin-left: 5px;
+    }
+    .action-btn:hover {
+      background-color: #7b1a25;
+      color: white;
+    }
+    input[type="number"].qty-input {
+      width: 60px;
+      padding: 4px 6px;
+      border: 1.5px solid #b23a48;
+      border-radius: 6px;
+      font-size: 1rem;
+      color: #4d4d4d;
+    }
+
+    /* Receipt box */
+    #receipt {
+      white-space: pre-wrap;
+      background: #fef1f3;
+      border: 2px dashed #b23a48;
+      border-radius: 12px;
+      padding: 20px;
+      height: 220px;
+      overflow-y: auto;
+      font-family: monospace, monospace;
+      color: #612f33;
+      user-select: text;
+    }
+
+    /* Receipt action buttons */
+    #action-buttons {
+      display: flex;
+      justify-content: flex-end;
+      gap: 15px;
+      margin-bottom: 25px;
+      flex-wrap: wrap;
+    }
+    #action-buttons button {
+      background-color: #b23a48;
+      color: white;
+      font-weight: 700;
+      border: none;
+      padding: 12px 25px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      user-select: none;
+      flex: 0 0 auto;
+    }
+    #action-buttons button:hover {
+      background-color: #7b1a25;
+    }
+
+    @media (max-width: 700px) {
+      #add-product-form {
+        flex-direction: column;
+      }
+      #add-product-form label,
+      #add-product-form input,
+      #add-product-form button {
+        flex: 1 1 100% !important;
+      }
+      #action-buttons {
+        justify-content: center;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Login Section -->
+  <section id="login-section" class="active" aria-label="Login Section">
+    <h1>Flower Shop POS System</h1>
+    <form id="login-form" aria-label="Login Form" autocomplete="off">
+      <label for="username">Username</label>
+      <input id="username" type="text" name="username" required aria-required="true" placeholder="Enter username" autofocus />
+      <label for="password">Password</label>
+      <input id="password" type="password" name="password" required aria-required="true" placeholder="Enter password" />
+      <button type="submit">Login</button>
+    </form>
+  </section>
+
+  <!-- POS Section -->
+  <section id="pos-section" aria-label="Point of Sale Section">
+    <div id="pos-header">
+      <h1>Flower Shop POS System</h1>
+      <button id="logout-button" aria-label="Logout button">Logout</button>
+    </div>
+
+    <!-- Add product form -->
+    <form id="add-product-form" aria-label="Add product form">
+      <div>
+        <label for="product-name">Product Name</label><br />
+        <input type="text" id="product-name" required placeholder="e.g. Daisy Bouquet" aria-required="true" />
+      </div>
+      <div>
+        <label for="product-price">Price (Rs)</label><br />
+        <input type="number" id="product-price"  required placeholder="Price" aria-required="true" />
+      </div>
+      <div>
+        <label for="product-quantity">Stock Quantity</label><br />
+        <input type="number" id="product-quantity" min="0" step="1" required placeholder="Quantity" aria-required="true" />
+      </div>
+      <button type="submit" aria-label="Add product">Add Product</button>
+    </form>
+
+    <!-- Inventory table -->
+    <table id="inventory-table" aria-label="Inventory Table">
+      <thead>
+        <tr>
+          <th>Product</th>
+          <th>Price (Rs)</th>
+          <th>Stock Quantity</th>
+          <th>Purchase</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Products will be dynamically added here -->
+      </tbody>
+    </table>
+
+    <!-- Receipt area -->
+    <h2>Receipt</h2>
+    <div id="action-buttons">
+      <button id="generate-receipt" aria-label="Generate receipt">Generate Receipt</button>
+      <button id="clear-receipt" aria-label="Clear receipt">Clear Receipt</button>
+    </div>
+    <div id="receipt" tabindex="0" aria-live="polite" aria-atomic="true" aria-label="Receipt content">
+      Your receipt will appear here after generation.
+    </div>
+  </section>
+
+  <script>
+    (function () {
+      // Elements for login
+      const loginSection = document.getElementById('login-section');
+      const posSection = document.getElementById('pos-section');
+      const loginForm = document.getElementById('login-form');
+      const usernameInput = document.getElementById('username');
+      const passwordInput = document.getElementById('password');
+      const logoutButton = document.getElementById('logout-button');
+
+      // Elements for POS
+      const addProductForm = document.getElementById('add-product-form');
+      const productNameInput = document.getElementById('product-name');
+      const productPriceInput = document.getElementById('product-price');
+      const productQuantityInput = document.getElementById('product-quantity');
+      const inventoryTableBody = document.querySelector('#inventory-table tbody');
+      const generateReceiptBtn = document.getElementById('generate-receipt');
+      const clearReceiptBtn = document.getElementById('clear-receipt');
+      const receiptEl = document.getElementById('receipt');
+
+      const VALID_USERNAME = 'admin';
+      const VALID_PASSWORD = 'flowers123';
+
+      let inventory = [];
+      let purchaseSelections = {}; // productId -> purchase quantity
+
+      // Utilities
+      function formatCurrency(value) {
+        return 'Rs' + value.toFixed(2);
+      }
+
+      // Show login screen and hide POS
+      function showLogin() {
+        loginSection.classList.add('active');
+        posSection.classList.remove('active');
+        loginForm.reset();
+        usernameInput.focus();
+        inventory = [];
+        purchaseSelections = {};
+        clearInventoryTable();
+        receiptEl.textContent = 'Your receipt will appear here after generation.';
+      }
+
+      // Show POS screen and hide login
+      function showPOS() {
+        loginSection.classList.remove('active');
+        posSection.classList.add('active');
+        productNameInput.focus();
+        renderInventory();
+        receiptEl.textContent = 'Your receipt will appear here after generation.';
+      }
+
+      // Clear inventory table body
+      function clearInventoryTable() {
+        inventoryTableBody.innerHTML = '';
+      }
+
+      // Event: Login form submit
+      loginForm.addEventListener('submit', function (e) {
+        e.preventDefault();
+        const username = usernameInput.value.trim();
+        const password = passwordInput.value;
+        if (username === VALID_USERNAME && password === VALID_PASSWORD) {
+          showPOS();
+        } else {
+          alert('Invalid username or password.');
+          passwordInput.value = '';
+          passwordInput.focus();
+        }
+      });
+
+      // Event: Logout button
+      logoutButton.addEventListener('click', () => {
+        if (confirm('Are you sure you want to log out?')) {
+          showLogin();
+        }
+      });
+
+      // Add product event
+      addProductForm.addEventListener('submit', e => {
+        e.preventDefault();
+
+        const name = productNameInput.value.trim();
+        const price = parseFloat(productPriceInput.value);
+        const quantity = parseInt(productQuantityInput.value, 10);
+
+        if (!name) {
+          alert('Please enter the product name.');
+          return;
+        }
+        if (isNaN(price) || price <= 0) {
+          alert('Please enter a valid price.');
+          return;
+        }
+        if (isNaN(quantity) || quantity < 0) {
+          alert('Please enter a valid stock quantity.');
+          return;
+        }
+
+        // Check if product exists, update if yes
+        const existingIndex = inventory.findIndex(p => p.name.toLowerCase() === name.toLowerCase());
+        if (existingIndex !== -1) {
+          inventory[existingIndex].price = price;
+          inventory[existingIndex].quantity = quantity;
+        } else {
+          inventory.push({
+            id: Date.now().toString(36) + Math.random().toString(36).slice(2, 7),
+            name,
+            price,
+            quantity
+          });
+        }
+
+        addProductForm.reset();
+        productNameInput.focus();
+        purchaseSelections = {};
+        renderInventory();
+        receiptEl.textContent = 'Your receipt will appear here after generation.';
+      });
+
+      // Render inventory table
+      function renderInventory() {
+        inventoryTableBody.innerHTML = '';
+        purchaseSelections = {};
+
+        inventory.forEach(product => {
+          const tr = document.createElement('tr');
+
+          const tdName = document.createElement('td');
+          tdName.textContent = product.name;
+          tr.appendChild(tdName);
+
+          const tdPrice = document.createElement('td');
+          tdPrice.textContent = formatCurrency(product.price);
+          tr.appendChild(tdPrice);
+
+          const tdQty = document.createElement('td');
+          tdQty.textContent = product.quantity;
+          tr.appendChild(tdQty);
+
+          // Purchase selection: checkbox + qty input
+          const tdPurchase = document.createElement('td');
+          const purchaseDiv = document.createElement('div');
+          purchaseDiv.style.display = 'flex';
+          purchaseDiv.style.alignItems = 'center';
+          purchaseDiv.style.gap = '8px';
+
+          const purchaseCheckbox = document.createElement('input');
+          purchaseCheckbox.type = 'checkbox';
+          purchaseCheckbox.id = 'purchase-' + product.id;
+          purchaseCheckbox.setAttribute('aria-label', `Select ${product.name} to purchase`);
+
+          const purchaseQtyInput = document.createElement('input');
+          purchaseQtyInput.type = 'number';
+          purchaseQtyInput.min = 1;
+          purchaseQtyInput.max = product.quantity;
+          purchaseQtyInput.value = 1;
+          purchaseQtyInput.classList.add('qty-input');
+          purchaseQtyInput.disabled = true;
+          purchaseQtyInput.setAttribute('aria-label', `Quantity to purchase for ${product.name}`);
+
+          purchaseCheckbox.addEventListener('change', function () {
+            if (this.checked) {
+              purchaseQtyInput.disabled = false;
+              purchaseSelections[product.id] = parseInt(purchaseQtyInput.value, 10);
+            } else {
+              purchaseQtyInput.disabled = true;
+              delete purchaseSelections[product.id];
+            }
+          });
+
+          purchaseQtyInput.addEventListener('input', function () {
+            let val = Math.min(Math.max(parseInt(this.value, 10) || 1, 1), product.quantity);
+            this.value = val;
+            if (purchaseCheckbox.checked) {
+              purchaseSelections[product.id] = val;
+            }
+          });
+
+          purchaseDiv.appendChild(purchaseCheckbox);
+          purchaseDiv.appendChild(purchaseQtyInput);
+          tdPurchase.appendChild(purchaseDiv);
+          tr.appendChild(tdPurchase);
+
+          // Actions column with Edit and Delete buttons
+          const tdActions = document.createElement('td');
+
+          const editBtn = document.createElement('button');
+          editBtn.textContent = '✎';
+          editBtn.classList.add('action-btn');
+          editBtn.title = `Edit ${product.name}`;
+          editBtn.type = 'button';
+          editBtn.addEventListener('click', () => editProduct(product.id));
+          tdActions.appendChild(editBtn);
+
+          const deleteBtn = document.createElement('button');
+          deleteBtn.textContent = '✖';
+          deleteBtn.classList.add('action-btn');
+          deleteBtn.title = `Delete ${product.name}`;
+          deleteBtn.type = 'button';
+          deleteBtn.addEventListener('click', () => deleteProduct(product.id));
+          tdActions.appendChild(deleteBtn);
+
+          tr.appendChild(tdActions);
+
+          inventoryTableBody.appendChild(tr);
+        });
+      }
+
+      // Edit product prompts
+      function editProduct(id) {
+        const product = inventory.find(p => p.id === id);
+        if (!product) return;
+
+        const newName = prompt('Edit product name:', product.name);
+        if (newName === null) return; // Cancelled
+        if (newName.trim() === '') {
+          alert('Product name cannot be empty.');
+          return;
+        }
+
+        const newPriceStr = prompt('Edit product price (Rs):', product.price.toFixed(2));
+        if (newPriceStr === null) return;
+        const newPrice = parseFloat(newPriceStr);
+        if (isNaN(newPrice) || newPrice <= 0) {
+          alert('Invalid price.');
+          return;
+        }
+
+        const newQtyStr = prompt('Edit stock quantity:', product.quantity);
+        if (newQtyStr === null) return;
+        const newQty = parseInt(newQtyStr, 10);
+        if (isNaN(newQty) || newQty < 0) {
+          alert('Invalid quantity.');
+          return;
+        }
+
+        product.name = newName.trim();
+        product.price = newPrice;
+        product.quantity = newQty;
+
+        purchaseSelections = {};
+        renderInventory();
+        receiptEl.textContent = 'Your receipt will appear here after generation.';
+      }
+
+      // Delete product from inventory
+      function deleteProduct(id) {
+        if (confirm('Delete this product?')) {
+          inventory = inventory.filter(p => p.id !== id);
+          purchaseSelections = {};
+          renderInventory();
+          receiptEl.textContent = 'Your receipt will appear here after generation.';
+        }
+      }
+
+      // Generate receipt
+      generateReceiptBtn.addEventListener('click', () => {
+        if (Object.keys(purchaseSelections).length === 0) {
+          alert('Please select products and quantities to purchase.');
+          return;
+        }
+        let receiptText = '🌸 Flower Shop Receipt 🌸\n\n';
+        receiptText += 'Date: ' + new Date().toLocaleString() + '\n\n';
+        receiptText += 'Items:\n';
+
+        let total = 0;
+        for (const id in purchaseSelections) {
+          const qty = purchaseSelections[id];
+          const product = inventory.find(p => p.id === id);
+          if (!product) continue;
+          if (qty > product.quantity) {
+            alert(`Quantity for ${product.name} exceeds stock.`);
+            return;
+          }
+          const subtotal = product.price * qty;
+          receiptText += `- ${product.name} x${qty} @ ${formatCurrency(product.price)} = ${formatCurrency(subtotal)}\n`;
+          total += subtotal;
+          product.quantity -= qty;
+          if (product.quantity < 0) product.quantity = 0;
+        }
+        receiptText += '\n------------------------------\n';
+        receiptText += `TOTAL: ${formatCurrency(total)}\n`;
+        receiptText += '\nThank you for your purchase! 💐';
+
+        receiptEl.textContent = receiptText;
+        receiptEl.focus();
+
+        purchaseSelections = {};
+        renderInventory();
+      });
+
+      // Clear receipt
+      clearReceiptBtn.addEventListener('click', () => {
+        receiptEl.textContent = 'Your receipt will appear here after generation.';
+        purchaseSelections = {};
+        renderInventory();
+      });
+
+      // Initialize with login page
+      showLogin();
+
+    })();
+  </script>
+</body>
+</html>
+
